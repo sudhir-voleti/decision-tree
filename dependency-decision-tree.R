@@ -1,4 +1,4 @@
-
+suppressPackageStartupMessages({
 try(require("shiny")||install.packages("shiny"))
 try(require("pastecs")||install.packages("pastecs"))
 try(require("rpart")||install.packages("rpart"))
@@ -9,7 +9,8 @@ try(require("hydroGOF")||install.packages("hydroGOF"))
 
 try(require("party")||install.packages("party"))
 try(require("partykit")||install.packages("partykit"))
-
+})
+  
 library(shiny)
 library(pastecs)
 library(dplyr)
