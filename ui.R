@@ -7,7 +7,8 @@ library("shiny")
 shinyUI(
   fluidPage(
     
-    titlePanel("Regression Tree"),
+   # titlePanel("Regression Tree"),
+    titlePanel(title=div(img(src="logo.png",align='right'),"Advance Text Analysis")),
     
     sidebarLayout(
       
