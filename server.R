@@ -42,22 +42,38 @@ shinyServer(function(input, output,session) {
   
   output$xvarselect <- renderUI({
     if (identical(readdata(), '') || identical(readdata(),data.frame())) return(NULL)
-    
-    checkboxGroupInput("xAttr", "Select X variables",
-                       setdiff(colnames(readdata()),input$yAttr), setdiff(colnames(readdata()),input$yAttr))
+    #varSelectInput("selVar",label = "Select Variables",data = Dataset(),multiple = TRUE,selectize = TRUE,selected = colnames(Dataset()))
+    selectInput("xAttr", label = "Select X variables",multiple = TRUE,
+                   selectize = TRUE,
+                   selected = setdiff(colnames(readdata()),input$yAttr),choices = setdiff(colnames(readdata()),input$yAttr)
+                   )#, setdiff(colnames(readdata()),input$yAttr))
     
   })
 
-  readdata.temp = reactive({
-    mydata = readdata()[,c(input$yAttr,input$xAttr)]
-  })
-
+ readdata.temp = reactive({
+   mydata = readdata()[,c(input$yAttr,input$xAttr)]
+ })
+  
+  data_fr_str <- reactive({
+    if (is.null(input$file)) { return(NULL) }
+    else{
+      data_frame_str(readdata())
+    }
+    
+    }) # get structure of uploaded dataset
     
   output$fxvarselect <- renderUI({
-    if (identical(readdata.temp(), '') || identical(readdata.temp(),data.frame())) return(NULL)
+    if (is.null(input$file)||identical(readdata.temp(), '') || identical(readdata.temp(),data.frame())) return(NULL)
     
-    checkboxGroupInput("fxAttr", "Select factor variable in Data set",
-                       colnames(readdata.temp()) )
+    cond_df <- data_fr_str() %>% filter((class=="numeric"| class=="integer") & unique_value_count<7)
+    cols <- cond_df$variable
+    
+    selectInput("fxAttr", 
+                  label="Select factor variable in Data set",
+                   multiple = TRUE,
+                   selectize = TRUE,
+                   selected =  cols,
+                   choices=names(readdata()) )
     
   })
   
@@ -242,17 +258,14 @@ shinyServer(function(input, output,session) {
     
   })
   
-  output$plot3 = renderPlot({
+  output$plot3 = renderVisNetwork({
     if (is.null(input$file)) {return(NULL)}
     
-    title1 = paste("Decision Tree for", input$yAttr)
     
-  post(fit.rt()$model, 
-       # file = "tree2.ps", 
-       filename = "",   # will print to console
-       use.n = TRUE,
-       compress = TRUE,
-       title = title1) 
+    visTree(fit.rt()$model, main = paste("Decision Tree for", input$yAttr), width = "100%")
+     
+    
+
   })
   
   

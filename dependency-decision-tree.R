@@ -6,11 +6,14 @@ try(require("dplyr")||install.packages("dplyr"))
 try(require("Hmisc")||install.packages("Hmisc"))
 try(require("randomForest")||install.packages("randomForest"))
 try(require("hydroGOF")||install.packages("hydroGOF"))
-
+if (!require(sparkline)){install.packages("sparkline")}; library("sparkline")
+  
 try(require("party")||install.packages("party"))
 try(require("partykit")||install.packages("partykit"))
 })
-  
+try(require("visNetwork")||install.packages("visNetwork"))
+
+
 library(shiny)
 library(pastecs)
 library(dplyr)
