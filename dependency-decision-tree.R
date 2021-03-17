@@ -12,6 +12,7 @@ try(require("party")||install.packages("party"))
 try(require("partykit")||install.packages("partykit"))
 })
 try(require("visNetwork")||install.packages("visNetwork"))
+try(require("DT")||install.packages("DT"))
 
 
 library(shiny)

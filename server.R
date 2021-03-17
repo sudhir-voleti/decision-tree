@@ -9,6 +9,7 @@ library(Hmisc)
 library("hydroGOF")
 require(party)
 require(partykit)
+library(visNetwork)
 
 shinyServer(function(input, output,session) {
   
@@ -30,6 +31,8 @@ shinyServer(function(input, output,session) {
     }
   })
 
+  # sample dataset
+  output$sample_data <- DT::renderDataTable(head(readdata()))
     
   # Select variables:
   output$yvarselect <- renderUI({
@@ -49,7 +52,44 @@ shinyServer(function(input, output,session) {
                    )#, setdiff(colnames(readdata()),input$yAttr))
     
   })
-
+  
+  #---Model summary tab-4-----#
+  
+  
+  output$split_summ <- renderDataTable({
+    if (is.null(input$file)) {return(NULL)}
+    leaf_nodes4train <- fit.rt()$model$where 
+    #leaf_nodes4train[1:8]
+    train1 = data.frame(train_data(), leaf_node = leaf_nodes4train)
+    head(train1)  # display full train1 as html table
+  })
+  
+  
+  output$mod_sum <- renderPrint({
+    if (is.null(input$file)) {return(NULL)}
+    as.party(fit.rt()$model)
+    })
+  
+  
+  
+  #-------------------------#
+  
+  
+  #-------results plot----#
+  output$results_plot <- renderPlot({
+    if (is.null(input$file)) {return(NULL)}
+    cptabl = fit.rt()$model$cptable
+    plot(x = seq(1:nrow(cptabl)), y = cptabl[,1], type = "b", col = "red", xlab = "num_splits", ylab = "Complexity_parm")
+    
+  }
+  )
+ 
+  #-------------------------#
+  
+  
+  
+  
+  
  readdata.temp = reactive({
    mydata = readdata()[,c(input$yAttr,input$xAttr)]
  })
@@ -214,12 +254,16 @@ shinyServer(function(input, output,session) {
     # formula.mod()
   })
   
+  #-----------------------------------------------#
+  
+ 
+  
   
   #------------------------------------------------#
   output$summary = renderPrint({
     if (is.null(input$file)) {return(NULL)}
     
-    summary(fit.rt()$model) # detailed summary of splits  
+    as.party(fit.rt()$model) # detailed summary of splits  
   })
   
   
@@ -230,6 +274,10 @@ shinyServer(function(input, output,session) {
     fit.rt()$imp
   })
   
+  output$var_imp_plot <- renderPlot({
+    if (is.null(input$file)) {return(NULL)}
+    varImp_plot(fit.rt()$model)
+  })
   #------------------------------------------------#
   output$plot1 = renderPlot({
     
@@ -349,5 +397,8 @@ shinyServer(function(input, output,session) {
       write.csv(read.csv("data/beer data - prediction sample.csv"), file, row.names=F, col.names=F)
     }
   )
+  
+  
+  
   
   })
