@@ -32,7 +32,7 @@ shinyServer(function(input, output,session) {
   })
 
   # sample dataset
-  output$sample_data <- DT::renderDataTable(head(readdata()))
+  output$sample_data <- DT::renderDataTable(DT::datatable(readdata(),options = list(pageLength =25)))
     
   # Select variables:
   output$yvarselect <- renderUI({
@@ -56,12 +56,12 @@ shinyServer(function(input, output,session) {
   #---Model summary tab-4-----#
   
   
-  output$split_summ <- renderDataTable({
+  output$split_summ <- DT::renderDataTable({
     if (is.null(input$file)) {return(NULL)}
     leaf_nodes4train <- fit.rt()$model$where 
     #leaf_nodes4train[1:8]
     train1 = data.frame(train_data(), leaf_node = leaf_nodes4train)
-    head(train1)  # display full train1 as html table
+    return(DT::datatable(train1,options = list(pageLength=25)))  # display full train1 as html table
   })
   
   
@@ -232,14 +232,14 @@ shinyServer(function(input, output,session) {
     if (is.null(input$file)) {return(NULL)}
     
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
-      y = test_data()[,input$yAttr]
-      yhat = fit.rt()$validation
-    confusion_matrix = table(y,yhat)
+      actual = test_data()[,input$yAttr]
+      predicted = fit.rt()$validation
+    confusion_matrix = table(actual,predicted)
     accuracy = (sum(diag(confusion_matrix))/sum(confusion_matrix))*100
     out = list(Confusion_matrix_of_Validation = confusion_matrix, Accuracy_of_Validation = accuracy)
     } else {
-    dft = data.frame(scale(data.frame(y = test_data()[,input$yAttr], yhat = fit.rt()$validation)))
-    mse.y = mse(dft$y,dft$yhat)
+    dft = data.frame(scale(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation)))
+    mse.y = mse(dft$actual,dft$predicted)
     out = list(Mean_Square_Error_of_Standardized_Response_in_Validation = mse.y)
     } 
     out

@@ -79,8 +79,7 @@ h5('month    =    month number 1 to 12'),
                              h4('Variable importance'),
                              verbatimTextOutput('imp'),
                              plotOutput('var_imp_plot',height = 400, width = 600),
-                             h4('Leaf node for each data point'),
-                             dataTableOutput("split_summ"),
+                             
                             ),
 
                     
@@ -92,7 +91,11 @@ h5('month    =    month number 1 to 12'),
                              visNetworkOutput("plot3",height = 600, width = 850),
                              hr(),
                              h4('Detailed summary of splits'),
-                             verbatimTextOutput("mod_sum")),
+                             verbatimTextOutput("mod_sum"),
+                             h4('Leaf node for each data point'),
+                             DT::dataTableOutput("split_summ")
+                             ),
+                  
                     # tabPanel("Node labels",
                     #          plotOutput("plot2",height = 600, width = 850),
                     #          h4("First 15 rows node number from model training data"),
