@@ -6,8 +6,8 @@ library("shiny")
 
 shinyUI(
   fluidPage(
-    
-   # titlePanel("Regression Tree"),
+    title = "Regression Tree",
+    # titlePanel("Regression Tree"),
     titlePanel(title=div(img(src="logo.png",align='right'),"Regression Tree")),
     
     sidebarLayout(
@@ -88,7 +88,7 @@ h5('month    =    month number 1 to 12'),
                              # h4('Visualize cross-validation results'),
                              # plotOutput("plot1",height = 600, width = 850),
                              # h4('Regression Tree'),
-                             visNetworkOutput("plot3",height = 600, width = 850),
+                             visNetwork::visNetworkOutput("plot3",height = 600, width = 850),
                              hr(),
                              h4('Detailed summary of splits'),
                              verbatimTextOutput("mod_sum"),
