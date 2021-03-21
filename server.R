@@ -9,6 +9,7 @@ library(Hmisc)
 library("hydroGOF")
 require(party)
 require(partykit)
+library(visNetwork)
 
 shinyServer(function(input, output,session) {
   
@@ -30,6 +31,8 @@ shinyServer(function(input, output,session) {
     }
   })
 
+  # sample dataset
+  output$sample_data <- DT::renderDataTable(DT::datatable(readdata(),options = list(pageLength =25)))
     
   # Select variables:
   output$yvarselect <- renderUI({
@@ -42,22 +45,75 @@ shinyServer(function(input, output,session) {
   
   output$xvarselect <- renderUI({
     if (identical(readdata(), '') || identical(readdata(),data.frame())) return(NULL)
-    
-    checkboxGroupInput("xAttr", "Select X variables",
-                       setdiff(colnames(readdata()),input$yAttr), setdiff(colnames(readdata()),input$yAttr))
+    #varSelectInput("selVar",label = "Select Variables",data = Dataset(),multiple = TRUE,selectize = TRUE,selected = colnames(Dataset()))
+    selectInput("xAttr", label = "Select X variables",multiple = TRUE,
+                   selectize = TRUE,
+                   selected = setdiff(colnames(readdata()),input$yAttr),choices = setdiff(colnames(readdata()),input$yAttr)
+                   )#, setdiff(colnames(readdata()),input$yAttr))
     
   })
-
-  readdata.temp = reactive({
-    mydata = readdata()[,c(input$yAttr,input$xAttr)]
+  
+  #---Model summary tab-4-----#
+  
+  
+  output$split_summ <- DT::renderDataTable({
+    if (is.null(input$file)) {return(NULL)}
+    leaf_nodes4train <- fit.rt()$model$where 
+    #leaf_nodes4train[1:8]
+    train1 = data.frame(train_data(), leaf_node = leaf_nodes4train)
+    return(DT::datatable(train1,options = list(pageLength=25)))  # display full train1 as html table
   })
-
+  
+  
+  output$mod_sum <- renderPrint({
+    if (is.null(input$file)) {return(NULL)}
+    as.party(fit.rt()$model)
+    })
+  
+  
+  
+  #-------------------------#
+  
+  
+  #-------results plot----#
+  output$results_plot <- renderPlot({
+    if (is.null(input$file)) {return(NULL)}
+    cptabl = fit.rt()$model$cptable
+    plot(x = seq(1:nrow(cptabl)), y = cptabl[,1], type = "b", col = "red", xlab = "num_splits", ylab = "Complexity_parm")
+    
+  }
+  )
+ 
+  #-------------------------#
+  
+  
+  
+  
+  
+ readdata.temp = reactive({
+   mydata = readdata()[,c(input$yAttr,input$xAttr)]
+ })
+  
+  data_fr_str <- reactive({
+    if (is.null(input$file)) { return(NULL) }
+    else{
+      data_frame_str(readdata())
+    }
+    
+    }) # get structure of uploaded dataset
     
   output$fxvarselect <- renderUI({
-    if (identical(readdata.temp(), '') || identical(readdata.temp(),data.frame())) return(NULL)
+    if (is.null(input$file)||identical(readdata.temp(), '') || identical(readdata.temp(),data.frame())) return(NULL)
     
-    checkboxGroupInput("fxAttr", "Select factor variable in Data set",
-                       colnames(readdata.temp()) )
+    cond_df <- data_fr_str() %>% filter((class=="numeric"| class=="integer") & unique_value_count<7)
+    cols <- cond_df$variable
+    
+    selectInput("fxAttr", 
+                  label="Select factor variable in Data set",
+                   multiple = TRUE,
+                   selectize = TRUE,
+                   selected =  cols,
+                   choices=names(readdata()) )
     
   })
   
@@ -176,14 +232,14 @@ shinyServer(function(input, output,session) {
     if (is.null(input$file)) {return(NULL)}
     
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
-      y = test_data()[,input$yAttr]
-      yhat = fit.rt()$validation
-    confusion_matrix = table(y,yhat)
+      actual = test_data()[,input$yAttr]
+      predicted = fit.rt()$validation
+    confusion_matrix = table(actual,predicted)
     accuracy = (sum(diag(confusion_matrix))/sum(confusion_matrix))*100
     out = list(Confusion_matrix_of_Validation = confusion_matrix, Accuracy_of_Validation = accuracy)
     } else {
-    dft = data.frame(scale(data.frame(y = test_data()[,input$yAttr], yhat = fit.rt()$validation)))
-    mse.y = mse(dft$y,dft$yhat)
+    dft = data.frame(scale(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation)))
+    mse.y = mse(dft$actual,dft$predicted)
     out = list(Mean_Square_Error_of_Standardized_Response_in_Validation = mse.y)
     } 
     out
@@ -198,12 +254,16 @@ shinyServer(function(input, output,session) {
     # formula.mod()
   })
   
+  #-----------------------------------------------#
+  
+ 
+  
   
   #------------------------------------------------#
   output$summary = renderPrint({
     if (is.null(input$file)) {return(NULL)}
     
-    summary(fit.rt()$model) # detailed summary of splits  
+    as.party(fit.rt()$model) # detailed summary of splits  
   })
   
   
@@ -214,6 +274,10 @@ shinyServer(function(input, output,session) {
     fit.rt()$imp
   })
   
+  output$var_imp_plot <- renderPlot({
+    if (is.null(input$file)) {return(NULL)}
+    varImp_plot(fit.rt()$model)
+  })
   #------------------------------------------------#
   output$plot1 = renderPlot({
     
@@ -242,17 +306,14 @@ shinyServer(function(input, output,session) {
     
   })
   
-  output$plot3 = renderPlot({
+  output$plot3 = renderVisNetwork({
     if (is.null(input$file)) {return(NULL)}
     
-    title1 = paste("Decision Tree for", input$yAttr)
     
-  post(fit.rt()$model, 
-       # file = "tree2.ps", 
-       filename = "",   # will print to console
-       use.n = TRUE,
-       compress = TRUE,
-       title = title1) 
+    visTree(fit.rt()$model, main = paste("Decision Tree for", input$yAttr), width = "100%")
+     
+    
+
   })
   
   
@@ -336,5 +397,8 @@ shinyServer(function(input, output,session) {
       write.csv(read.csv("data/beer data - prediction sample.csv"), file, row.names=F, col.names=F)
     }
   )
+  
+  
+  
   
   })
