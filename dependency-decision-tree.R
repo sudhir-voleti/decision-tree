@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
   if (!require('randomForest')){install.packages('randomForest')}; library(randomForest)
   if (!require('hydroGOF')){install.packages('hydroGOF')}; library(hydroGOF)
   if (!require('sparkline')){install.packages('sparkline')}; library(sparkline)
-  if (!require('partykit')){install.packages('partykit')}; library(partykit)visNetwork
-  if (!require('visNetwork')){install.packages('visNetwork')}; library(visNetwork)
-  if (!require('DT')){install.packages('DT')}; library(DT)
+  if (!require('partykit')){install.packages('partykit')}; library(partykit)
+  if (!require('visNetwork')){install.packages('visNetwork')};library(visNetwork)
+  if (!require('DT')){install.packages('DT')};library(DT)
 })
