@@ -1,25 +1,14 @@
+
 suppressPackageStartupMessages({
-try(require("shiny")||install.packages("shiny"))
-try(require("pastecs")||install.packages("pastecs"))
-try(require("rpart")||install.packages("rpart"))
-try(require("dplyr")||install.packages("dplyr"))
-try(require("Hmisc")||install.packages("Hmisc"))
-try(require("randomForest")||install.packages("randomForest"))
-try(require("hydroGOF")||install.packages("hydroGOF"))
-if (!require(sparkline)){install.packages("sparkline")}; library("sparkline")
-  
-try(require("party")||install.packages("party"))
-try(require("partykit")||install.packages("partykit"))
+  if (!require('shiny')){install.packages('shiny')}; library(shiny)
+  if (!require('pastecs')){install.packages('pastecs')}; library(pastecs)
+  if (!require('rpart')){install.packages('rpart')}; library(rpart)
+  if (!require('dplyr')){install.packages('dplyr')}; library(dplyr)
+  if (!require('Hmisc')){install.packages('Hmisc')}; library(Hmisc)
+  if (!require('randomForest')){install.packages('randomForest')}; library(randomForest)
+  if (!require('hydroGOF')){install.packages('hydroGOF')}; library(hydroGOF)
+  if (!require('sparkline')){install.packages('sparkline')}; library(sparkline)
+  if (!require('partykit')){install.packages('partykit')}; library(partykit)visNetwork
+  if (!require('visNetwork')){install.packages('visNetwork')}; library(visNetwork)
+  if (!require('DT')){install.packages('DT')}; library(DT)
 })
-try(require("visNetwork")||install.packages("visNetwork"))
-try(require("DT")||install.packages("DT"))
-
-
-library(shiny)
-library(pastecs)
-library(dplyr)
-library(rpart)
-library(randomForest)
-library(hydroGOF)
-library(party)
-library(partykit)
