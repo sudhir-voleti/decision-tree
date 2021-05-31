@@ -228,7 +228,7 @@ shinyServer(function(input, output,session) {
   out = list(model = fit.rt, validation = val, imp = imp)
     })
 
-  output$validation = renderPrint({
+  mod_conf <- reactive({
     if (is.null(input$file)) {return(NULL)}
     
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
@@ -245,7 +245,22 @@ shinyServer(function(input, output,session) {
     out
        })
 
+  #------------------------------------------------#
+    output$validation <- renderPlot({
+    if (class(train_data()[,c(input$yAttr)]) == "factor"){
+      fourfoldplot(mod_conf()[[1]],
+                   color = c("#CC6666", "#99CC99"),
+                   conf.level = 0,
+                   main="")
+    }else{
+      return(NULL)
+    }
   
+  })
+  #------------------------------------------------#
+    output$validation1 <- renderPrint({
+    cat("Accuracy of the model on validation data is ",mod_conf()[[2]])
+  })
   #------------------------------------------------#
   output$results = renderPrint({
     
