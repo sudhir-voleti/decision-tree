@@ -7,7 +7,7 @@ library("shiny")
 shinyUI(
   fluidPage(
     
-   # titlePanel("Regression Tree"),
+    # titlePanel("Regression Tree"),
     titlePanel(title=div(img(src="logo.png",align='right'),"Decision Tree App")),
     
     sidebarLayout(
@@ -25,7 +25,7 @@ shinyUI(
         htmlOutput("fxvarselect")
       ),   # end of sidebar panel
       
-    mainPanel(
+      mainPanel(
         tabsetPanel(type = "tabs",
                     tabPanel("Overview",
                              h4(p("How to use this shiny application")),
@@ -45,27 +45,27 @@ shinyUI(
                              br(),
                              downloadButton('downloadData2', 'Download prediction input file (works only in browsers)'),
                              h5("Description of variables in sample file is as follows-"),
-h5('week_num    =    week serial number'),
-h5('sku_num    =    SKU serial number'),
-h5('beer_brand    =    brand names of beers'),
-h5('sku_size_oz    =    SKU size in fluid ounces'),
-h5('bottle    =    whether bottle or can'),
-h5('light_color    =    Whether Light colored beer'),
-h5('amber_color    =    Whether Amber colored beer'),
-h5('golden_color    =    Whether Golden colored beer'),
-h5('lite_beer    =    Whether low calorie beer'),
-h5('regular_beer    =    Whether regular beer'),
-h5('ad_spend    =    ad spend in $000'),
-h5('price_per_oz    =    Price in $ per oz'),
-h5('beer_distbn    =    Weighted distribution'),
-h5('promo    =    Weighted Promotional activities'),
-h5('beer_sales_vol    =    volume sold in that week'),
-h5('month    =    month number 1 to 12'),
-
+                             h5('week_num    =    week serial number'),
+                             h5('sku_num    =    SKU serial number'),
+                             h5('beer_brand    =    brand names of beers'),
+                             h5('sku_size_oz    =    SKU size in fluid ounces'),
+                             h5('bottle    =    whether bottle or can'),
+                             h5('light_color    =    Whether Light colored beer'),
+                             h5('amber_color    =    Whether Amber colored beer'),
+                             h5('golden_color    =    Whether Golden colored beer'),
+                             h5('lite_beer    =    Whether low calorie beer'),
+                             h5('regular_beer    =    Whether regular beer'),
+                             h5('ad_spend    =    ad spend in $000'),
+                             h5('price_per_oz    =    Price in $ per oz'),
+                             h5('beer_distbn    =    Weighted distribution'),
+                             h5('promo    =    Weighted Promotional activities'),
+                             h5('beer_sales_vol    =    volume sold in that week'),
+                             h5('month    =    month number 1 to 12'),
+                             
                              br(),
                              p("Please note that download will not work with RStudio interface. Download will work only in web-browsers. So open this app in a web-browser and then download the example file. For opening this app in web-browser click on \"Open in Browser\" as shown below -"),
                              img(src = "example1.png") #, height = 280, width = 400
-                             ),
+                    ),
                     tabPanel("Data Summary",
                              h4(p("Uploaded Data (Top-5 rows)")),
                              DT::dataTableOutput("sample_data"),
@@ -80,8 +80,8 @@ h5('month    =    month number 1 to 12'),
                              verbatimTextOutput('imp'),
                              plotOutput('var_imp_plot',height = 400, width = 600),
                              
-                            ),
-
+                    ),
+                    
                     
                     
                     tabPanel("Decision Tree",
@@ -94,8 +94,8 @@ h5('month    =    month number 1 to 12'),
                              verbatimTextOutput("mod_sum"),
                              h4('Leaf node for each data point'),
                              DT::dataTableOutput("split_summ")
-                             ),
-                  
+                    ),
+                    
                     # tabPanel("Node labels",
                     #          plotOutput("plot2",height = 600, width = 850),
                     #          h4("First 15 rows node number from model training data"),
@@ -111,8 +111,9 @@ h5('month    =    month number 1 to 12'),
                              
                              h4('Validation Result Summary'),
                              #verbatimTextOutput("validation"),
-                             plotOutput("validation"),
-                             verbatimTextOutput("validation1")
+                             verbatimTextOutput("validation1"),
+                             plotOutput("validation")
+                             
                              # h4('Detailed summary of splits'),
                              # verbatimTextOutput("summary")
                     ),    
@@ -122,13 +123,11 @@ h5('month    =    month number 1 to 12'),
                              dataTableOutput('prediction'),
                              h4("Download Predicted data"),
                              downloadButton('downloadData1', 'Download Predicted data (Works only in browser)')
-                             )
-                             
+                    )
+                    
         ) # end of tabsetPanel
       )# end of main panel
     ) # end of sidebarLayout
   )  # end if fluidPage
 ) # end of UI
-
-
 
