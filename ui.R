@@ -110,15 +110,16 @@ h5('month    =    month number 1 to 12'),
                     tabPanel("Model Performance",
                              
                              h4('Validation Result Summary'),
-                             verbatimTextOutput("validation"),
-                             
+                             #verbatimTextOutput("validation"),
+                             plotOutput("validation"),
+                             verbatimTextOutput("validation1")
                              # h4('Detailed summary of splits'),
                              # verbatimTextOutput("summary")
                     ),    
                     tabPanel("Prediction",br(),
                              h4("First 10 rows of predicted data"),
                              p('"Yhat" column is the predicted value.'),
-                             verbatimTextOutput('prediction'),
+                             dataTableOutput('prediction'),
                              h4("Download Predicted data"),
                              downloadButton('downloadData1', 'Download Predicted data (Works only in browser)')
                              )
