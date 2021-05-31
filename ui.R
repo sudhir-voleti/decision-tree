@@ -8,7 +8,7 @@ shinyUI(
   fluidPage(
     
    # titlePanel("Regression Tree"),
-    titlePanel(title=div(img(src="logo.png",align='right'),"Regression Tree")),
+    titlePanel(title=div(img(src="logo.png",align='right'),"Decision Tree App")),
     
     sidebarLayout(
       
