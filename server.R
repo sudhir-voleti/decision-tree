@@ -259,7 +259,7 @@ shinyServer(function(input, output,session) {
   })
   #------------------------------------------------#
     output$validation1 <- renderPrint({
-    cat("Accuracy of the model on validation data is ",mod_conf()[[2]])
+    cat("Accuracy of the model on validation data is ",round(mod_conf()[[2]],3),"%")
   })
   #------------------------------------------------#
   output$results = renderPrint({
