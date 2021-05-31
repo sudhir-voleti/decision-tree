@@ -22,7 +22,7 @@ shinyServer(function(input, output,session) {
       return(readdata)
     }
   })
-
+  
   pred.readdata <- reactive({
     if (is.null(input$filep)) { return(NULL) }
     else{
@@ -30,10 +30,10 @@ shinyServer(function(input, output,session) {
       return(readdata)
     }
   })
-
+  
   # sample dataset
   output$sample_data <- DT::renderDataTable(DT::datatable(readdata(),options = list(pageLength =25)))
-    
+  
   # Select variables:
   output$yvarselect <- renderUI({
     if (is.null(input$file)) {return(NULL)}
@@ -47,9 +47,9 @@ shinyServer(function(input, output,session) {
     if (identical(readdata(), '') || identical(readdata(),data.frame())) return(NULL)
     #varSelectInput("selVar",label = "Select Variables",data = Dataset(),multiple = TRUE,selectize = TRUE,selected = colnames(Dataset()))
     selectInput("xAttr", label = "Select X variables",multiple = TRUE,
-                   selectize = TRUE,
-                   selected = setdiff(colnames(readdata()),input$yAttr),choices = setdiff(colnames(readdata()),input$yAttr)
-                   )#, setdiff(colnames(readdata()),input$yAttr))
+                selectize = TRUE,
+                selected = setdiff(colnames(readdata()),input$yAttr),choices = setdiff(colnames(readdata()),input$yAttr)
+    )#, setdiff(colnames(readdata()),input$yAttr))
     
   })
   
@@ -68,7 +68,7 @@ shinyServer(function(input, output,session) {
   output$mod_sum <- renderPrint({
     if (is.null(input$file)) {return(NULL)}
     as.party(fit.rt()$model)
-    })
+  })
   
   
   
@@ -83,16 +83,16 @@ shinyServer(function(input, output,session) {
     
   }
   )
- 
+  
   #-------------------------#
   
   
   
   
   
- readdata.temp = reactive({
-   mydata = readdata()[,c(input$yAttr,input$xAttr)]
- })
+  readdata.temp = reactive({
+    mydata = readdata()[,c(input$yAttr,input$xAttr)]
+  })
   
   data_fr_str <- reactive({
     if (is.null(input$file)) { return(NULL) }
@@ -100,8 +100,8 @@ shinyServer(function(input, output,session) {
       data_frame_str(readdata())
     }
     
-    }) # get structure of uploaded dataset
-    
+  }) # get structure of uploaded dataset
+  
   output$fxvarselect <- renderUI({
     if (is.null(input$file)||identical(readdata.temp(), '') || identical(readdata.temp(),data.frame())) return(NULL)
     
@@ -109,11 +109,11 @@ shinyServer(function(input, output,session) {
     cols <- cond_df$variable
     
     selectInput("fxAttr", 
-                  label="Select factor variable in Data set",
-                   multiple = TRUE,
-                   selectize = TRUE,
-                   selected =  cols,
-                   choices=names(readdata()) )
+                label="Select factor variable in Data set",
+                multiple = TRUE,
+                selectize = TRUE,
+                selected =  cols,
+                choices=names(readdata()) )
     
   })
   
@@ -146,7 +146,7 @@ shinyServer(function(input, output,session) {
   # a = c('a','b','c')
   # b = ('c')
   # setdiff(a,b)
-    #------------------------------------------------#
+  #------------------------------------------------#
   
   out = reactive({
     data = Dataset()
@@ -179,12 +179,12 @@ shinyServer(function(input, output,session) {
   })
   
   testsample =  reactive({
-  set.seed(5898)
-  sample(1:nrow(Dataset()), round(nrow(Dataset())*((input$sample)/100)))
-         })
-
+    set.seed(5898)
+    sample(1:nrow(Dataset()), round(nrow(Dataset())*((input$sample)/100)))
+  })
+  
   train_data = reactive({
-      Dataset()[-testsample(),]
+    Dataset()[-testsample(),]
   })
   
   test_data = reactive({
@@ -195,58 +195,59 @@ shinyServer(function(input, output,session) {
   
   #------------------------------------------------#
   fit.rt = reactive({
-  if (identical(Dataset(), '') || identical(Dataset(),data.frame())) return(NULL)
+    if (identical(Dataset(), '') || identical(Dataset(),data.frame())) return(NULL)
     
-  x = setdiff(colnames(Dataset()), input$Attr)
-  y = input$yAttr
-  # formula1 = 
+    x = setdiff(colnames(Dataset()), input$Attr)
+    y = input$yAttr
+    # formula1 = 
+    
+    
+    
+    ## mean predictions
+    
+    if (class(train_data()[,c(input$yAttr)]) == "factor"){
+      fit.rt <- rpart(as.formula(paste(y, paste( x, collapse = ' + '), sep=" ~ ")),
+                      cp = input$cp,
+                      method="class",   # use "class" for classification trees
+                      data=train_data())
+      pr <- as.party(fit.rt)    # thus, we use same object 'rp' from the raprt package
+      val = predict(pr, newdata = test_data(),type="response")
+      
+      imp = round(fit.rt$variable.importance/sum(fit.rt$variable.importance),2)
+      
+    } else {
+      fit.rt <- rpart(as.formula(paste(y, paste( x, collapse = ' + '), sep=" ~ ")),
+                      cp = input$cp,
+                      method="anova",   # use "class" for classification trees
+                      data=train_data())
+      pr <- as.party(fit.rt)    # thus, we use same object 'rp' from the raprt package
+      val = predict(pr, newdata = test_data())
+      imp = round(fit.rt$variable.importance/sum(fit.rt$variable.importance),2)
+    }
+    
+    out = list(model = fit.rt, validation = val, imp = imp)
+  })
   
-  
-  
-  ## mean predictions
-  
-  if (class(train_data()[,c(input$yAttr)]) == "factor"){
-  fit.rt <- rpart(as.formula(paste(y, paste( x, collapse = ' + '), sep=" ~ ")),
-                  cp = input$cp,
-                  method="class",   # use "class" for classification trees
-                data=train_data())
-  pr <- as.party(fit.rt)    # thus, we use same object 'rp' from the raprt package
-  val = predict(pr, newdata = test_data(),type="response")
-  
-  imp = round(fit.rt$variable.importance/sum(fit.rt$variable.importance),2)
-  
-  } else {
-  fit.rt <- rpart(as.formula(paste(y, paste( x, collapse = ' + '), sep=" ~ ")),
-                  cp = input$cp,
-                  method="anova",   # use "class" for classification trees
-                  data=train_data())
-  pr <- as.party(fit.rt)    # thus, we use same object 'rp' from the raprt package
-   val = predict(pr, newdata = test_data())
-   imp = round(fit.rt$variable.importance/sum(fit.rt$variable.importance),2)
-  }
-  
-  out = list(model = fit.rt, validation = val, imp = imp)
-    })
-
   mod_conf <- reactive({
     if (is.null(input$file)) {return(NULL)}
     
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
       actual = test_data()[,input$yAttr]
       predicted = fit.rt()$validation
-    confusion_matrix = table(actual,predicted)
-    accuracy = (sum(diag(confusion_matrix))/sum(confusion_matrix))*100
-    out = list(Confusion_matrix_of_Validation = confusion_matrix, Accuracy_of_Validation = accuracy)
+      confusion_matrix = table(actual,predicted)
+      accuracy = (sum(diag(confusion_matrix))/sum(confusion_matrix))*100
+      out = list(Confusion_matrix_of_Validation = confusion_matrix, Accuracy_of_Validation = accuracy)
     } else {
-    dft = data.frame(scale(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation)))
-    mse.y = mse(dft$actual,dft$predicted)
-    out = list(Mean_Square_Error_of_Standardized_Response_in_Validation = mse.y)
+      dft = data.frame(scale(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation)))
+      mse.y = mse(dft$actual,dft$predicted)
+      out = list(Mean_Square_Error_of_Standardized_Response_in_Validation = mse.y)
     } 
     out
-       })
-
+  })
+  
   #------------------------------------------------#
-    output$validation <- renderPlot({
+  output$validation <- renderPlot({
+    req(input$file)
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
       fourfoldplot(mod_conf()[[1]],
                    color = c("#CC6666", "#99CC99"),
@@ -255,23 +256,29 @@ shinyServer(function(input, output,session) {
     }else{
       return(NULL)
     }
-  
+    
   })
   #------------------------------------------------#
-    output$validation1 <- renderPrint({
-    cat("Accuracy of the model on validation data is ",round(mod_conf()[[2]],3),"%")
+  output$validation1 <- renderPrint({
+    req(input$file)
+    if (class(train_data()[,c(input$yAttr)]) == "factor"){
+      cat("Accuracy of the model on validation data is ",round(mod_conf()[[2]],3),"%")
+    }else{
+      mod_conf()
+    }
+    
   })
   #------------------------------------------------#
   output$results = renderPrint({
     
     if (is.null(input$file)) {return(NULL)}
-     printcp(fit.rt()$model) # display the results
+    printcp(fit.rt()$model) # display the results
     # formula.mod()
   })
   
   #-----------------------------------------------#
   
- 
+  
   
   
   #------------------------------------------------#
@@ -326,33 +333,33 @@ shinyServer(function(input, output,session) {
     
     
     visTree(fit.rt()$model, main = paste("Decision Tree for", input$yAttr), width = "100%")
-     
     
-
+    
+    
   })
   
   
   #------------------------------------------------#
   nodes1 =  reactive({
     
-  tree_nodes = as.data.frame(fit.rt()$model$where)
-  colnames(tree_nodes) <- "node_number"
-  # tree_nodes %>% head()
+    tree_nodes = as.data.frame(fit.rt()$model$where)
+    colnames(tree_nodes) <- "node_number"
+    # tree_nodes %>% head()
     
-  a0 = as.numeric(rownames(fit.rt()$model$frame)); a0
-  a1 = seq(1:nrow(fit.rt()$model$frame)); a1 
-  a2 = as.vector(fit.rt()$model$where)
-  node_num = a2
-  for (i1 in 1:nrow(tree_nodes)){
-    node_num[i1] = a0[a2[i1]]
-  }
-  
-  tree_nodes1 <- fit.rt()$model$where %>% as.data.frame() %>% 
-  cbind(node_num) %>% dplyr::select("node_num")
-  tree_nodes1
-  
+    a0 = as.numeric(rownames(fit.rt()$model$frame)); a0
+    a1 = seq(1:nrow(fit.rt()$model$frame)); a1 
+    a2 = as.vector(fit.rt()$model$where)
+    node_num = a2
+    for (i1 in 1:nrow(tree_nodes)){
+      node_num[i1] = a0[a2[i1]]
+    }
+    
+    tree_nodes1 <- fit.rt()$model$where %>% as.data.frame() %>% 
+      cbind(node_num) %>% dplyr::select("node_num")
+    tree_nodes1
+    
   })
-
+  
   output$nodesout = renderPrint({
     head(nodes1(),15)
   })
@@ -368,7 +375,6 @@ shinyServer(function(input, output,session) {
   
   prediction = reactive({
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
-      
       fit.rt <- fit.rt()$model
       pr <- as.party(fit.rt)    # thus, we use same object 'rp' from the raprt package
       val = predict(pr, newdata = Dataset.Predict(),type="response")
@@ -416,4 +422,4 @@ shinyServer(function(input, output,session) {
   
   
   
-  })
+})
