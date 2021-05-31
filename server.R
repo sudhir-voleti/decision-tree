@@ -386,7 +386,7 @@ shinyServer(function(input, output,session) {
     
   })
   
-  output$prediction =  renderPrint({
+  output$prediction =  renderDataTable({
     if (is.null(input$filep)) {return(NULL)}
     head(prediction(),10)
   })
