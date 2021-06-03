@@ -11,4 +11,6 @@ suppressPackageStartupMessages({
   if (!require('partykit')){install.packages('partykit')}; library(partykit)
   if (!require('visNetwork')){install.packages('visNetwork')};library(visNetwork)
   if (!require('DT')){install.packages('DT')};library(DT)
+  if (!require('tidyr')){install.packages('tidyr')};library(tidyr)
+  
 })
