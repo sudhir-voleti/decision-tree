@@ -238,9 +238,9 @@ shinyServer(function(input, output,session) {
       accuracy = (sum(diag(confusion_matrix))/sum(confusion_matrix))*100
       out = list(Confusion_matrix_of_Validation = confusion_matrix, Accuracy_of_Validation = accuracy)
     } else {
-      dft = data.frame(scale(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation)))
+      dft = data.frame(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation))
       mse.y = mse(dft$actual,dft$predicted)
-      out = list(Mean_Square_Error_of_Standardized_Response_in_Validation = mse.y)
+      out = list(Mean_Square_Error_On_Validation_Set = mse.y)
     } 
     out
   })
