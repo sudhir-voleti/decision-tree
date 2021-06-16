@@ -19,6 +19,7 @@ shinyServer(function(input, output,session) {
     if (is.null(input$file)) { return(NULL) }
     else{
       readdata <- as.data.frame(read.csv(input$file$datapath ,header=TRUE, sep = ","))
+      readdata <- readdata %>% drop_na()
       return(readdata)
     }
   })
@@ -27,6 +28,7 @@ shinyServer(function(input, output,session) {
     if (is.null(input$filep)) { return(NULL) }
     else{
       readdata <- as.data.frame(read.csv(input$filep$datapath ,header=TRUE, sep = ","))
+      readdata <- readdata %>% drop_na()
       return(readdata)
     }
   })
@@ -387,7 +389,7 @@ shinyServer(function(input, output,session) {
       
     }
     
-    out = data.frame(Yhat = val, pred.readdata())
+    out = data.frame(Yhat = round(val,2), pred.readdata())
     return(out)    
     
   })
@@ -423,3 +425,5 @@ shinyServer(function(input, output,session) {
   
   
 })
+
+
