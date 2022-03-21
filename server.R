@@ -111,7 +111,7 @@ shinyServer(function(input, output,session) {
     cols <- cond_df$variable
     
     selectInput("fxAttr", 
-                label="Select factor variable in Data set",
+                label="Select non-metric variable in Data set",
                 multiple = TRUE,
                 selectize = TRUE,
                 selected =  cols,
