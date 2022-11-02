@@ -1,5 +1,5 @@
 ###########################################################
-#         Regression Tree App (server)              #
+#         Regression Tree App (server)                    #
 ###########################################################
 library(shiny)
 library(rpart)
@@ -18,7 +18,7 @@ shinyServer(function(input, output,session) {
   readdata <- reactive({
     if (is.null(input$file)) { return(NULL) }
     else{
-      readdata <- as.data.frame(read.csv(input$file$datapath ,header=TRUE, sep = ","))
+      readdata <- as.data.frame(read.csv(input$file$datapath ,header=TRUE, sep = ",", stringsAsFactors = TRUE))
       readdata <- readdata %>% drop_na()
       return(readdata)
     }
@@ -27,7 +27,7 @@ shinyServer(function(input, output,session) {
   pred.readdata <- reactive({
     if (is.null(input$filep)) { return(NULL) }
     else{
-      readdata <- as.data.frame(read.csv(input$filep$datapath ,header=TRUE, sep = ","))
+      readdata <- as.data.frame(read.csv(input$filep$datapath ,header=TRUE, sep = ",", stringsAsFactors = TRUE))
       readdata <- readdata %>% drop_na()
       return(readdata)
     }
@@ -389,7 +389,7 @@ shinyServer(function(input, output,session) {
       
     }
     
-    out = data.frame(Yhat = round(val,2), pred.readdata())
+    out = data.frame(Yhat = val, pred.readdata())
     return(out)    
     
   })
@@ -408,16 +408,16 @@ shinyServer(function(input, output,session) {
     }
   )
   output$downloadData <- downloadHandler(
-    filename = function() { "beer data.csv" },
+    filename = function() { "Titanic.csv" },
     content = function(file) {
-      write.csv(read.csv("data/beer data.csv"), file, row.names=F, col.names=F)
+      write.csv(read.csv("data/Titanic.csv"), file, row.names=F, col.names=F)
     }
   )
   
   output$downloadData2 <- downloadHandler(
-    filename = function() { "beer data - prediction sample.csv" },
+    filename = function() { "Titanic_Prediction.csv" },
     content = function(file) {
-      write.csv(read.csv("data/beer data - prediction sample.csv"), file, row.names=F, col.names=F)
+      write.csv(read.csv("data/titanic_prediction sample.csv"), file, row.names=F, col.names=F)
     }
   )
   
