@@ -421,8 +421,14 @@ shinyServer(function(input, output,session) {
     }
   )
   
+  # US health insur premia 4regn tree.csv
   
-  
+  output$downloadData03 <- downloadHandler(
+    filename = function() { "US health insur premia 4regn tree.csv.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/US health insur premia 4regn tree.csv"), file, row.names=F, col.names=F)
+    }
+  )
   
 })
 
