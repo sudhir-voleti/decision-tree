@@ -430,6 +430,41 @@ shinyServer(function(input, output,session) {
     }
   )
   
+  output$downloadData <- downloadHandler(
+    filename = function() { "Titanic.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/Titanic.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadHR_predictions <- downloadHandler(
+    filename = function() { "HR_analytics_prediction.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/HR_analytics_prediction.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadHR_train <- downloadHandler(
+    filename = function() { "HR_analytics_train.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/HR_analytics_train ver1.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadTelecomPrediction <- downloadHandler(
+    filename = function() { "Telco_cust_churn_prediction.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/Telco_cust_churn_prediction.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadTelecomTrain <- downloadHandler(
+    filename = function() { "Telco_Customer_Churn_train.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/Telco_Customer_Churn_train.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
 })
 
 
