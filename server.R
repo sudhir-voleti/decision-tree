@@ -248,7 +248,7 @@ shinyServer(function(input, output,session) {
   })
   
   #------------------------------------------------#
-  output$validation <- renderPlot({
+  output$validation0 <- renderPlot({
     req(input$file)
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
       fourfoldplot(mod_conf()[[1]],
@@ -259,6 +259,14 @@ shinyServer(function(input, output,session) {
       return(NULL)
     }
     
+  })
+  
+  output$validation <- renderTable({
+    req(input$file)
+    if (class(train_data()[,c(input$yAttr)]) == "factor"){
+      as.data.frame(mod_conf()[[1]])
+    }
+    else{return(NULL)}
   })
   #------------------------------------------------#
   output$validation1 <- renderPrint({
