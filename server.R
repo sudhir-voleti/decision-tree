@@ -409,7 +409,7 @@ shinyServer(function(input, output,session) {
   })
   
     output$plot_pred = renderPlot({
-    plot(as.numeric(test_data()[,input$yAttr]), as.numeric(fit.rt()$validation))
+    plot(as.numeric(test_data()[,input$yAttr]), as.numeric(fit.rt()$validation), xlab = "Actual Values", ylab = "Predicted Values")
     fit <- lm(as.numeric(fit.rt()$validation) ~ as.numeric(test_data()[,input$yAttr]))
     abline(fit)
     ylab("Predicted Values")
