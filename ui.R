@@ -37,7 +37,10 @@ shinyUI(
                               If you want to drop any variable from explanatory variables, just delete that variable and it will be dropped from the model.
                             ",align="justify"),
                              p('You can also adjust the complexity parameter in regression tree model. Default value of complexity parameter is "0.01". You can adjust the validation sample proportion from the slider in left sidebar panel. Validation sample will be selected from the input data set. If you have a similar data set on which you want to make the prediction based on regression tree, You can upload that data set in left side bar panel. Please note that prediction data should have all explanatory variables similar to model data.',align="justify"),
-                             br(),
+                             br()
+                    ),
+                    tabPanel("Data Download",
+                             
                              h4(p("Download Sample Input Files")),
                              # br(),
                              downloadButton('downloadData03', 'Download US insurance premiums CSV file.'),
@@ -60,6 +63,7 @@ shinyUI(
                              br(),
                              downloadButton('downloadData2', 'Download prediction input file.'),
                              br()
+                      
                     ),
                     tabPanel("Data Summary",
                              h4(p("Uploaded Data (Top-5 rows)")),
@@ -107,7 +111,7 @@ shinyUI(
                              h4('Validation Result Summary'),
                              #verbatimTextOutput("validation"),
                              verbatimTextOutput("validation1"),
-                             plotOutput("validation")
+                             tableOutput("validation")
                              
                              # h4('Detailed summary of splits'),
                              # verbatimTextOutput("summary")
