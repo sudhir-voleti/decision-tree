@@ -408,6 +408,13 @@ shinyServer(function(input, output,session) {
     head(prediction(),10)
   })
   
+    output$plot_pred = renderPlot({
+    plot(as.numeric(test_data()[,input$yAttr]), as.numeric(fit.rt()$validation))
+    fit <- lm(as.numeric(fit.rt()$validation) ~ as.numeric(test_data()[,input$yAttr]))
+    abline(fit)
+    #head(test_data()[,input$yAttr])
+  })
+  
   #------------------------------------------------#
   output$downloadData1 <- downloadHandler(
     filename = function() { "Predicted Data.csv" },
