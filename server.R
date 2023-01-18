@@ -473,6 +473,19 @@ shinyServer(function(input, output,session) {
     }
   )
   
+    output$downloadHousingTrain <- downloadHandler(
+    filename = function() { "califHousing_train.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/califHousing_train.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+    output$downloadHousingPredict <- downloadHandler(
+    filename = function() { "califHousing_prediction.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/califHousing_prediction.csv"), file, row.names=F, col.names=F)
+    }
+  )
 })
 
 
