@@ -1,5 +1,5 @@
 ###########################################################
-#         Regression Tree App (server)              #
+#         Regression Tree App (server)                    #
 ###########################################################
 library(shiny)
 library(rpart)
@@ -18,7 +18,8 @@ shinyServer(function(input, output,session) {
   readdata <- reactive({
     if (is.null(input$file)) { return(NULL) }
     else{
-      readdata <- as.data.frame(read.csv(input$file$datapath ,header=TRUE, sep = ","))
+      readdata <- as.data.frame(read.csv(input$file$datapath ,header=TRUE, sep = ",", stringsAsFactors = TRUE))
+      readdata <- readdata %>% drop_na()
       return(readdata)
     }
   })
@@ -26,7 +27,8 @@ shinyServer(function(input, output,session) {
   pred.readdata <- reactive({
     if (is.null(input$filep)) { return(NULL) }
     else{
-      readdata <- as.data.frame(read.csv(input$filep$datapath ,header=TRUE, sep = ","))
+      readdata <- as.data.frame(read.csv(input$filep$datapath ,header=TRUE, sep = ",", stringsAsFactors = TRUE))
+      readdata <- readdata %>% drop_na()
       return(readdata)
     }
   })
@@ -109,7 +111,7 @@ shinyServer(function(input, output,session) {
     cols <- cond_df$variable
     
     selectInput("fxAttr", 
-                label="Select factor variable in Data set",
+                label="Select non-metric variable in Data set",
                 multiple = TRUE,
                 selectize = TRUE,
                 selected =  cols,
@@ -240,13 +242,16 @@ shinyServer(function(input, output,session) {
     } else {
       dft = data.frame(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation))
       mse.y = mse(dft$actual,dft$predicted)
-      out = list(Mean_Square_Error_On_Validation_Set = mse.y)
+
+      rmse.y = hydroGOF::rmse(dft$predicted ,dft$actual)
+      out = list(Mean_Square_Error_On_Validation_Set = mse.y, RMSE_On_Validation = rmse.y)
+
     } 
     out
   })
   
   #------------------------------------------------#
-  output$validation <- renderPlot({
+  output$validation0 <- renderPlot({
     req(input$file)
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
       fourfoldplot(mod_conf()[[1]],
@@ -257,6 +262,14 @@ shinyServer(function(input, output,session) {
       return(NULL)
     }
     
+  })
+  
+  output$validation <- renderTable({
+    req(input$file)
+    if (class(train_data()[,c(input$yAttr)]) == "factor"){
+      as.data.frame(mod_conf()[[1]])
+    }
+    else{return(NULL)}
   })
   #------------------------------------------------#
   output$validation1 <- renderPrint({
@@ -397,6 +410,15 @@ shinyServer(function(input, output,session) {
     head(prediction(),10)
   })
   
+    output$plot_pred = renderPlot({
+    plot(as.numeric(test_data()[,input$yAttr]), as.numeric(fit.rt()$validation), xlab = "Actual Values", ylab = "Predicted Values")
+    fit <- lm(as.numeric(fit.rt()$validation) ~ as.numeric(test_data()[,input$yAttr]))
+    abline(fit)
+    ylab("Predicted Values")
+    xlab("Actual Values")
+    #head(test_data()[,input$yAttr])
+  })
+  
   #------------------------------------------------#
   output$downloadData1 <- downloadHandler(
     filename = function() { "Predicted Data.csv" },
@@ -406,20 +428,76 @@ shinyServer(function(input, output,session) {
     }
   )
   output$downloadData <- downloadHandler(
-    filename = function() { "beer data.csv" },
+    filename = function() { "Titanic.csv" },
     content = function(file) {
-      write.csv(read.csv("data/beer data.csv"), file, row.names=F, col.names=F)
+      write.csv(read.csv("data/Titanic.csv"), file, row.names=F, col.names=F)
     }
   )
   
   output$downloadData2 <- downloadHandler(
-    filename = function() { "beer data - prediction sample.csv" },
+    filename = function() { "Titanic_Prediction.csv" },
     content = function(file) {
-      write.csv(read.csv("data/beer data - prediction sample.csv"), file, row.names=F, col.names=F)
+      write.csv(read.csv("data/titanic_prediction sample.csv"), file, row.names=F, col.names=F)
     }
   )
   
+  # US health insur premia 4regn tree.csv
   
+  output$downloadData03 <- downloadHandler(
+    filename = function() { "US health insur premia 4regn tree.csv.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/US health insur premia 4regn tree.csv"), file, row.names=F, col.names=F)
+    }
+  )
   
+  output$downloadData <- downloadHandler(
+    filename = function() { "Titanic.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/Titanic.csv"), file, row.names=F, col.names=F)
+    }
+  )
   
+  output$downloadHR_predictions <- downloadHandler(
+    filename = function() { "HR_analytics_prediction.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/HR_analytics_prediction.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadHR_train <- downloadHandler(
+    filename = function() { "HR_analytics_train.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/HR_analytics_train ver1.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadTelecomPrediction <- downloadHandler(
+    filename = function() { "Telco_cust_churn_prediction.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/Telco_cust_churn_prediction.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+  output$downloadTelecomTrain <- downloadHandler(
+    filename = function() { "Telco_Customer_Churn_train.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/Telco_Customer_Churn_train.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+    output$downloadHousingTrain <- downloadHandler(
+    filename = function() { "califHousing_train.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/califHousing_train.csv"), file, row.names=F, col.names=F)
+    }
+  )
+  
+    output$downloadHousingPredict <- downloadHandler(
+    filename = function() { "califHousing_prediction.csv" },
+    content = function(file) {
+      write.csv(read.csv("data/califHousing_prediction.csv"), file, row.names=F, col.names=F)
+    }
+  )
 })
+
+
