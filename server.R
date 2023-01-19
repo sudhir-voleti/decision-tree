@@ -242,8 +242,10 @@ shinyServer(function(input, output,session) {
     } else {
       dft = data.frame(data.frame(actual = test_data()[,input$yAttr], predicted = fit.rt()$validation))
       mse.y = mse(dft$actual,dft$predicted)
+
       rmse.y = hydroGOF::rmse(dft$predicted ,dft$actual)
       out = list(Mean_Square_Error_On_Validation_Set = mse.y, RMSE_On_Validation = rmse.y)
+
     } 
     out
   })
