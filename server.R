@@ -263,8 +263,24 @@ shinyServer(function(input, output,session) {
     }
     
   })
-  
+
   output$validation <- renderTable({
+  req(input$file)
+  
+  if (class(train_data()[,c(input$yAttr)]) == "factor") {
+    # Generate the confusion matrix
+    conf_matrix <- table(reference = as.factor(train_data()[, input$yAttr]),
+                         prediction = as.factor(mod_conf()[[1]]))  # Adjust 'predicted_values()' based on your model output
+    
+    # Return the confusion matrix as a data frame
+    as.data.frame(conf_matrix)
+  } else {
+    return(NULL)
+  }
+})
+
+  
+  output$validation00 <- renderTable({
     req(input$file)
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
       as.data.frame(mod_conf()[[1]])
