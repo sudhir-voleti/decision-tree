@@ -115,7 +115,7 @@ shinyUI(
                     tabPanel("Model Performance",
                              
                              h4('Validation Result Summary'),
-                             verbatimTextOutput("validation"),
+                             tableOutput("validation"),
                              verbatimTextOutput("validation1"),
                              verbatimTextOutput("valdn"),
                              plotOutput("validation0"),
