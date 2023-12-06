@@ -264,6 +264,11 @@ shinyServer(function(input, output,session) {
     
   })
 
+  output$valdn <- renderText({
+req(input$file)
+    cat(mod_conf()[[1]])
+})
+
   output$validation <- renderTable({
   req(input$file)
 
