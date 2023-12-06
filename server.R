@@ -269,25 +269,28 @@ req(input$file)
     as.data.frame(mod_conf()[[1]])
 })
 
-  output$validation <- renderTable({
+  output$validation <- renderText({
   req(input$file)
 
+  # Check if the Y attribute is a factor
   if (class(train_data()[, c(input$yAttr)]) == "factor") {
-    # Access the confusion matrix and predicted values directly
-    confusion_matrix <- mod_conf()$Confusion_matrix_of_Validation
-    predicted_values <- as.factor(mod_conf()$Confusion_matrix_of_Validation$predicted)
-    
-    # Return a data frame with the predicted values
-    data.frame(Actual = mod_conf()$Confusion_matrix_of_Validation$actual,
-               Predicted = predicted_values)
+    # Generate the confusion matrix
+    conf_matrix <- table(reference = as.factor(train_data()[, input$yAttr]),
+                         prediction = as.factor(mod_conf()[[1]]))
+
+    # Return the confusion matrix as a data frame
+    return(as.data.frame(conf_matrix))
   } else {
     # Handle the case when it's not a factor
-    dft <- data.frame(data.frame(actual = test_data()[, input$yAttr], predicted = fit.rt()$validation))
-    mse.y <- mse(dft$actual, dft$predicted)
-    rmse.y <- hydroGOF::rmse(dft$predicted, dft$actual)
-    
+    predicted_values <- mod_conf()[[1]]  # Adjust if necessary
+    actual_values <- train_data()[, input$yAttr]
+    dft <- data.frame(actual = actual_values, predicted = predicted_values)
+
+    mse.y <- mse(dft$actual, dft$predicted)  # Ensure mse function is defined
+    rmse.y <- hydroGOF::rmse(dft$predicted, dft$actual)  # hydroGOF package must be installed and loaded
+
     # Return a data frame with MSE and RMSE
-    data.frame(Mean_Square_Error_On_Validation_Set = mse.y, RMSE_On_Validation = rmse.y)
+    return(data.frame(Mean_Square_Error_On_Validation_Set = mse.y, RMSE_On_Validation = rmse.y))
   }
 })
 
