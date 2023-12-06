@@ -267,6 +267,9 @@ shinyServer(function(input, output,session) {
   output$validation <- renderTable({
 req(input$file)
     res = matrix(mod_conf()[[1]], nrow = 2)
+    # Assign row names and column names
+rownames(res) <- c("Predicted", "Actual")
+colnames(res) <- c("Predicted", "Actual")
     return(res)
 })
   
