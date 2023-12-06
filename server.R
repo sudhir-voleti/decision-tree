@@ -269,25 +269,40 @@ req(input$file)
     as.data.frame(mod_conf()[[1]])
 })
 
-  output$validation <- renderText({
+  output$validation <- renderTable({
   req(input$file)
 
   # Check if the Y attribute is a factor
   if (class(train_data()[, c(input$yAttr)]) == "factor") {
+    actual_values <- as.factor(train_data()[, input$yAttr])
+    predicted_values <- as.factor(mod_conf()[[1]])
+
+    # Check if actual and predicted values have the same length
+    if (length(actual_values) != length(predicted_values)) {
+      stop("Length of actual and predicted values does not match")
+    }
+
     # Generate the confusion matrix
-    conf_matrix <- table(reference = as.factor(train_data()[, input$yAttr]),
-                         prediction = as.factor(mod_conf()[[1]]))
+    conf_matrix <- table(reference = actual_values, prediction = predicted_values)
 
     # Return the confusion matrix as a data frame
     return(as.data.frame(conf_matrix))
   } else {
-    # Handle the case when it's not a factor
-    predicted_values <- mod_conf()[[1]]  # Adjust if necessary
+    # Handle the case when Y attribute is not a factor
     actual_values <- train_data()[, input$yAttr]
+    predicted_values <- mod_conf()[[1]]
+
+    # Check if actual and predicted values have the same length
+    if (length(actual_values) != length(predicted_values)) {
+      stop("Length of actual and predicted values does not match")
+    }
+
+    # Create a data frame for actual and predicted values
     dft <- data.frame(actual = actual_values, predicted = predicted_values)
 
-    mse.y <- mse(dft$actual, dft$predicted)  # Ensure mse function is defined
-    rmse.y <- hydroGOF::rmse(dft$predicted, dft$actual)  # hydroGOF package must be installed and loaded
+    # Ensure the mse and rmse functions are defined or replace them with appropriate functions
+    mse.y <- mse(dft$actual, dft$predicted)
+    rmse.y <- hydroGOF::rmse(dft$predicted, dft$actual)
 
     # Return a data frame with MSE and RMSE
     return(data.frame(Mean_Square_Error_On_Validation_Set = mse.y, RMSE_On_Validation = rmse.y))
