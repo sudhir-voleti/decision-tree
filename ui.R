@@ -115,9 +115,10 @@ shinyUI(
                     tabPanel("Model Performance",
                              
                              h4('Validation Result Summary'),
-                             tableOutput("validation"),
+                             
                              verbatimTextOutput("validation1"),
-                             verbatimTextOutput("valdn"),
+                             #verbatimTextOutput("valdn"),
+                             tableOutput("validation"),
                              plotOutput("validation0"),
                              plotOutput('plot_pred')
                              # h4('Detailed summary of splits'),
