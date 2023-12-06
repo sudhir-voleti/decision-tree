@@ -263,8 +263,17 @@ shinyServer(function(input, output,session) {
     }
     
   })
-  
+
   output$validation <- renderTable({
+req(input$file)
+    res = matrix(mod_conf()[[1]], nrow = 2)
+    # Assign row names and column names
+#rownames(res) <- c("Predicted", "Actual")
+colnames(res) <- c("Confusion", "Matrix")
+    return(res)
+})
+  
+  output$validation00 <- renderTable({
     req(input$file)
     if (class(train_data()[,c(input$yAttr)]) == "factor"){
       as.data.frame(mod_conf()[[1]])
