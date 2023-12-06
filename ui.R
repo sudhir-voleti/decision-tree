@@ -117,6 +117,7 @@ shinyUI(
                              h4('Validation Result Summary'),
                              #verbatimTextOutput("validation"),
                              verbatimTextOutput("validation1"),
+                             verbatimTextOutput("valdn"),
                              plotOutput("validation0"),
                              plotOutput('plot_pred')
                              # h4('Detailed summary of splits'),
