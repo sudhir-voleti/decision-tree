@@ -118,7 +118,7 @@ shinyUI(
                              
                              verbatimTextOutput("validation1"),
                              #verbatimTextOutput("valdn"),
-                             tags$img(src = "1_fxiTNIgOyvAombPJx5KGeA.png", height = 200, width = 300)
+                             tags$img(src = "1_fxiTNIgOyvAombPJx5KGeA.png", height = 200, width = 300),
                              tableOutput("validation"),
                              plotOutput("validation0"),
                              plotOutput('plot_pred')
