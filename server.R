@@ -272,7 +272,7 @@ rownames1 <- c("Predicted Positive", "Predicted Negative")
 colnames1 <- c("Actual Positive", "Actual Negative")
     list1 = list(rownames1, colnames1)
     dimnames(res) = list1
-    return(res)
+    return(as.data.frame(res))
 })
   
   output$validation00 <- renderTable({
