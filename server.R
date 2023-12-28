@@ -268,8 +268,10 @@ shinyServer(function(input, output,session) {
 req(input$file)
     res = matrix(mod_conf()[[1]], nrow = 2)
     # Assign row names and column names
-rownames(res) <- c("Predicted Positive", "Predicted Negative")
-colnames(res) <- c("Actual Positive", "Actual Negative")
+rownames1 <- c("Predicted Positive", "Predicted Negative")
+colnames1 <- c("Actual Positive", "Actual Negative")
+    list1 = list(rownames1, colnames1)
+    dimnames(res) = list1
     return(res)
 })
   
