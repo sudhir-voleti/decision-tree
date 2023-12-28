@@ -273,7 +273,7 @@ colnames1 <- c("Actual Positive", "Actual Negative")
     list1 = list(rownames1, colnames1)
     dimnames(res) = list1
     return(as.data.frame(res))
-})
+}, rownames = TRUE)
   
   output$validation00 <- renderTable({
     req(input$file)
