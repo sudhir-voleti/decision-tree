@@ -13,9 +13,9 @@ suppressPackageStartupMessages({
   if (!require('DT')){install.packages('DT')};library(DT)
   if (!require('tidyr')){install.packages('tidyr')};library(tidyr)
   #if (!require('hydroGOF')){install.packages('hydroGOF')};library(hydroGOF)
-  if (!require(devtools)) {install.packages("devtools")}; library(devtools); 
-  if (!require('hydroTSM')) {install_github("hzambran/hydroTSM")}; library('hydroTSM') 
-  if (!require('hydroGOF')) {install_github("hzambran/hydroGOF")}; library('hydroGOF')
+  if (!require('devtools')){install.packages("devtools")}; library(devtools) 
+  if (!require('hydroTSM')){install_github("hzambran/hydroTSM")}; library('hydroTSM') 
+  if (!require('hydroGOF')){install_github("hzambran/hydroGOF")}; library('hydroGOF')
   #install_github("hzambran/hydroTSM");install_github("hzambran/hydroGOF")
 })
 
