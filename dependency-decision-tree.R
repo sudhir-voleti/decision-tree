@@ -3,6 +3,7 @@ suppressPackageStartupMessages({
   if (!require('shiny')){install.packages('shiny')}; library(shiny)
   if (!require('pastecs')){install.packages('pastecs')}; library(pastecs)
   if (!require('rpart')){install.packages('rpart')}; library(rpart)
+  if (!require('party')){install.packages('party')}; library(party)
   if (!require('dplyr')){install.packages('dplyr')}; library(dplyr)
   if (!require('Hmisc')){install.packages('Hmisc')}; library(Hmisc)
   if (!require('randomForest')){install.packages('randomForest')}; library(randomForest)
