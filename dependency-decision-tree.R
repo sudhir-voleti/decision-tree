@@ -12,5 +12,6 @@ suppressPackageStartupMessages({
   if (!require('visNetwork')){install.packages('visNetwork')};library(visNetwork)
   if (!require('DT')){install.packages('DT')};library(DT)
   if (!require('tidyr')){install.packages('tidyr')};library(tidyr)
+  if (!require('hydroGOF')){install.packages('hydroGOF')};library(hydroGOF)
 })
 
